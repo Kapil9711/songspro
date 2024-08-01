@@ -6,6 +6,7 @@ import CustomError from "../utils/CustomError.js";
 import jwt from "jsonwebtoken";
 import getLoginQuery from "../utils/getLoginQuery.js";
 import sendToken from "../utils/sendToken.js";
+import crypto from "crypto";
 
 //register new user = api/v1/register
 export const register = catchAsyncError(async (req, res, next) => {
@@ -58,4 +59,35 @@ export const login = catchAsyncError(async (req, res, next) => {
 export const forgotPassword = catchAsyncError(async (req, res, next) => {
   const user = await userModel.findOne(req.body);
   if (!user) return next(new CustomError("User not found", 400));
+  const resetToken = user.getResetPasswordToken();
+  await user.save({ validateBeforeSave: true });
+  res
+    .status(200)
+    .json({ success: true, message: "User Found Successfully", resetToken });
+});
+
+//password reset = api/v1/password/reset
+export const resetPassword = catchAsyncError(async (req, res, next) => {
+  const resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(req.params.token)
+    .digest("hex");
+
+  const user = await userModel
+    .findOne({
+      resetPasswordToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    })
+    .select("+password");
+  if (!user) return next(new CustomError("Token not found or expired", 400));
+
+  user.password = req.body.password;
+  user.resetPasswordToken = undefined;
+  user.resetPasswordExpires = undefined;
+  await user.save({ validateBeforeSave: true });
+
+  res.status(200).json({
+    success: true,
+    message: "Password reset successfully",
+  });
 });
