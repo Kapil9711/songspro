@@ -7,6 +7,8 @@ import jwt from "jsonwebtoken";
 import getLoginQuery from "../utils/getLoginQuery.js";
 import sendToken from "../utils/sendToken.js";
 import crypto from "crypto";
+import fileModel from "../models/files.js";
+import fs from "fs";
 
 //register new user = api/v1/register
 export const register = catchAsyncError(async (req, res, next) => {
@@ -89,5 +91,76 @@ export const resetPassword = catchAsyncError(async (req, res, next) => {
   res.status(200).json({
     success: true,
     message: "Password reset successfully",
+  });
+});
+
+//get user = api/v1/profile
+export const getUserProfile = catchAsyncError(async (req, res, next) => {
+  const user = await userModel
+    .findById(req.user.id)
+    .select("-password -isadmin");
+  if (!user) return next(new CustomError("Login to get the info", 401));
+
+  res.status(200).json({ success: false, data: user });
+});
+
+// upload image = api/v1/image
+
+export const uploadImage = catchAsyncError(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+
+  if (!user) return next(new CustomError("Login to access this resourse", 401));
+
+  if (!req.files)
+    return next(new CustomError("Please provide image to upload", 400));
+
+  const file = req.files.image;
+
+  file.name = "img" + user._id + file.name;
+  const fileDb = await fileModel.findOne({ user: req.user.id });
+  if (!fileDb) {
+    await fileModel.create({
+      filename: file.name,
+      data: file.data,
+      mimetype: file.mimetype,
+      user: req.user.id,
+    });
+    res.status(201).json({
+      success: true,
+      message: "uploaded successfully",
+    });
+  } else {
+    await fileModel.findByIdAndUpdate(fileDb._id, {
+      filename: file.name,
+      data: file.data,
+      mimetype: file.mimetype,
+    });
+    res.status(201).json({
+      success: true,
+      message: "changed successfully",
+    });
+  }
+});
+
+//get image = api/v1/image
+
+export const getImage = catchAsyncError(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (!user) return next(new CustomError("Login to access this resourse", 401));
+
+  const fileDb = await fileModel.findOne({ user: req.user.id });
+  if (!fileDb) return next(new CustomError("File not Found", 404));
+
+  const uploadPath = "./temp/" + fileDb.filename;
+  res.setHeader("Content-Type", "image/jpeg");
+  res.setHeader(
+    "Content-Disposition",
+    'attachment; filename="userProfile.jpg"'
+  );
+
+  fs.writeFile(uploadPath, fileDb.data, (err, data) => {
+    if (err) return next(new CustomError("Internal server error", 500));
+    const readStream = fs.createReadStream(uploadPath);
+    readStream.pipe(res);
   });
 });
