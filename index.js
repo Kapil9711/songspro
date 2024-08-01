@@ -19,6 +19,10 @@ import userRoutes from "./routes/userRoute.js";
 
 app.use("/api/v1", userRoutes);
 
+/*====GlobalError=====*/
+import errors from "./middlewares/globalErrors.js";
+app.use(errors);
+
 /*======Server========
  1. connecting to db
  2. starting server
