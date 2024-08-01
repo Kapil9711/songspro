@@ -53,3 +53,9 @@ export const login = catchAsyncError(async (req, res, next) => {
 
   sendToken(user, 200, "Login Successfull", res);
 });
+
+//password forgot = api/v1/password/forgot
+export const forgotPassword = catchAsyncError(async (req, res, next) => {
+  const user = await userModel.findOne(req.body);
+  if (!user) return next(new CustomError("User not found", 400));
+});
