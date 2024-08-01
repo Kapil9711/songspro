@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import validator, { isEAN } from "validator";
+import validator from "validator";
 
 const options = {
   username: {
@@ -19,11 +19,20 @@ const options = {
     },
   },
 
-  passsword: {
+  password: {
     type: String,
     required: [true, "Password is required"],
     minlength: [8, "Password should have 8 character"],
   },
+  isverified: {
+    type: Boolean,
+    default: false,
+  },
+  isadmin: {
+    type: Boolean,
+    default: false,
+  },
+
   resetPasswordToken: String,
   resetPasswordExpires: String,
 };

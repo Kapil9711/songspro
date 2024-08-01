@@ -2,12 +2,27 @@ import "dotenv/config";
 import express from "express";
 const app = express();
 
-/*
- ==============
+/*===Parsers===
+ 1 body-parser
+ 2 cookie-parser
+ ============*/
+import cookieParser from "cookie-parser";
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+/*====Routes====
+ 1. userRoute
+ 2.
+ ==============*/
+import userRoutes from "./routes/userRoute.js";
+
+app.use("/api/v1", userRoutes);
+
+/*======Server========
  1. connecting to db
  2. starting server
- ==============
-*/
+ ==============*/
 import connectDB from "./Db/db.js";
 
 const PORT = process.env.PORT || 8000;
