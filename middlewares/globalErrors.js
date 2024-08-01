@@ -20,7 +20,7 @@ const errors = (err, req, res, next) => {
       message = `${Object.keys(err.keyValue)} already exists`;
       errorCopy = new CustomError(message, 400);
     }
-    if ((err.name = "Validator")) {
+    if (err.name === "Validator") {
       const message = message.slice(err.message.lastIndexOf(":") + 1).trim();
       errorCopy = new CustomError(message, 400);
     }

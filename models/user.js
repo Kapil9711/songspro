@@ -25,6 +25,7 @@ const options = {
     type: String,
     required: [true, "Password is required"],
     minlength: [8, "Password should have 8 character"],
+    Select: false,
   },
   isverified: {
     type: Boolean,
@@ -33,6 +34,7 @@ const options = {
   isadmin: {
     type: Boolean,
     default: false,
+    Select: false,
   },
 
   resetPasswordToken: String,
@@ -43,7 +45,7 @@ const userSchema = new Schema(options, { timestamps: true });
 
 //hash the password before save
 userSchema.pre("save", async function (next) {
-  console.log(this);
+  if (!this.isModified("password")) return next();
   this.password = await bcrypt.hash(this.password, 10);
   next();
 });
