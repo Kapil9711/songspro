@@ -1,5 +1,6 @@
 import { Schema, model } from "mongoose";
 import validator from "validator";
+import bcrypt from "bcryptjs";
 
 const options = {
   username: {
@@ -38,6 +39,12 @@ const options = {
 };
 
 const userSchema = new Schema(options, { timestamps: true });
+
+userSchema.pre("save", async function (next) {
+  console.log(this);
+  this.password = await bcrypt.hash(this.password, 10);
+  next();
+});
 
 const userModel = model("User", userSchema);
 
