@@ -11,6 +11,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+/*====Static Files====
+ 1. public
+ ==============*/
+import __dirname from "./getDir.js";
+import path from "path";
+app.use(express.static(path.join(__dirname, "public")));
+
 /*====Routes====
  1. userRoute
  2.

@@ -9,6 +9,7 @@ import sendToken from "../utils/sendToken.js";
 import crypto from "crypto";
 import fileModel from "../models/files.js";
 import fs from "fs";
+import sharp from "sharp";
 
 //register new user = api/v1/register
 export const register = catchAsyncError(async (req, res, next) => {
@@ -118,10 +119,19 @@ export const uploadImage = catchAsyncError(async (req, res, next) => {
 
   file.name = "img" + user._id + file.name;
   const fileDb = await fileModel.findOne({ user: req.user.id });
+
+  const compresedBuffer = await sharp(fileDb.data)
+    .resize({ width: 800 })
+    .jpeg({ quality: 50 })
+    .toBuffer();
+
+  user.image = file.name;
+  await user.save({ validateBeforeSave: true });
+
   if (!fileDb) {
     await fileModel.create({
       filename: file.name,
-      data: file.data,
+      data: compresedBuffer,
       mimetype: file.mimetype,
       user: req.user.id,
     });
@@ -132,7 +142,7 @@ export const uploadImage = catchAsyncError(async (req, res, next) => {
   } else {
     await fileModel.findByIdAndUpdate(fileDb._id, {
       filename: file.name,
-      data: file.data,
+      data: compresedBuffer,
       mimetype: file.mimetype,
     });
     res.status(201).json({
@@ -163,4 +173,12 @@ export const getImage = catchAsyncError(async (req, res, next) => {
     const readStream = fs.createReadStream(uploadPath);
     readStream.pipe(res);
   });
+});
+
+// is user logged in = /api/v1/islogin
+export const isUserLoggedIn = catchAsyncError(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (user) {
+    res.status(200).json({ success: true });
+  } else res.status(401).json({ success: false });
 });

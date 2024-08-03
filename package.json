@@ -23,6 +23,7 @@
     "mongoose": "^8.5.2",
     "nodemailer": "^6.9.14",
     "nodemon": "^3.1.4",
+    "sharp": "^0.33.4",
     "validator": "^13.12.0"
   }
 }

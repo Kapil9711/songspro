@@ -10,6 +10,7 @@ import {
   register,
   resetPassword,
   verifyEmail,
+  isUserLoggedIn,
 } from "../controllers/userController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
@@ -20,6 +21,7 @@ router.route("/password/forgot").put(forgotPassword);
 router.route("/password/reset/:token").put(resetPassword);
 
 router.route("/profile").get(isAuthenticated, getUserProfile);
+router.route("/islogin").get(isAuthenticated, isUserLoggedIn);
 
 router
   .route("/image")
