@@ -20,12 +20,18 @@ app.use(express.static(path.join(__dirname, "public")));
 
 /*====Routes====
  1. userRoute
- 2.
+ 2. fav Route
  ==============*/
 import userRoutes from "./routes/userRoute.js";
+import favRoutes from "./routes/favRoute.js";
 
 app.use("/api/v1", userRoutes);
+app.use("/api/v1", favRoutes);
 
+// all routes should redirect to this
+app.use("/*", (req, res, next) => {
+  res.send("Route not found");
+});
 /*====GlobalError=====*/
 import errors from "./middlewares/globalErrors.js";
 app.use(errors);
