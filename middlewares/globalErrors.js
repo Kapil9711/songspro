@@ -14,7 +14,7 @@ const errors = (err, req, res, next) => {
   }
 
   if (process.env.NODE_ENV == "production") {
-    let errorCopy = { ...err };
+    let errorCopy = { statusCode, message };
 
     if (err.code === 11000) {
       message = `${Object.keys(err.keyValue)} already exists`;
