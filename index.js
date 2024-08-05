@@ -21,17 +21,21 @@ app.use(express.static(path.join(__dirname, "public")));
 /*====Routes====
  1. userRoute
  2. fav Route
+ 3. playlist Router
  ==============*/
 import userRoutes from "./routes/userRoute.js";
 import favRoutes from "./routes/favRoute.js";
+import playlistRoutes from "./routes/playlistRoute.js";
 
 app.use("/api/v1", userRoutes);
 app.use("/api/v1", favRoutes);
+app.use("/api/v1", playlistRoutes);
 
-// all routes should redirect to this
-app.use("/*", (req, res, next) => {
-  res.send("Route not found");
+//catch all routes
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
 });
+
 /*====GlobalError=====*/
 import errors from "./middlewares/globalErrors.js";
 app.use(errors);

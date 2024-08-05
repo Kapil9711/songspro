@@ -5,6 +5,7 @@ import CustomError from "../utils/CustomError.js";
 
 // add new fav => api/v1/fav/new
 export const addFav = catchAsyncError(async (req, res, next) => {
+  console.log("recved");
   const user = await userModel.findById(req.user.id);
   if (!user) return next(new CustomError("Login access this info", 401));
 
