@@ -9,7 +9,10 @@ export const addFav = catchAsyncError(async (req, res, next) => {
   const user = await userModel.findById(req.user.id);
   if (!user) return next(new CustomError("Login access this info", 401));
 
-  const isExist = await favModel.findOne({ songId: req.body.songId });
+  const isExist = await favModel.findOne({
+    songId: req.body.songId,
+    user: req.user.id,
+  });
 
   if (isExist) return next(new CustomError("already added", 400));
 
