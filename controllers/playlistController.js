@@ -8,6 +8,16 @@ export const createPlaylist = cathcAsyncError(async (req, res, next) => {
   const user = await userModel.findById(req.user.id);
   if (!user) return next(new CustomError("Login to access this", 401));
 
+  const isExist = await playlistModel.findOne({
+    name: req.body.name,
+    user: req.user.id,
+  });
+  if (isExist) return next(new CustomError("Playlist already exits", 404));
+
+  const isMore = await playlist.find({ user: req.user.id });
+  if (isMore.length === 8)
+    return next(new CustomError("You can only create 8 playlist", 404));
+
   const playlist = await playlistModel.create({
     name: req.body.name,
     user: req.user.id,
@@ -44,6 +54,12 @@ export const addSongToPlaylist = cathcAsyncError(async (req, res, next) => {
   const playlist = await playlistModel.findById(req.params.id);
 
   if (!playlist) return next(new CustomError("Playlist is not Found"));
+
+  const isSongExist = await playlistModel.findOne({
+    user: req.user.id,
+    "songs.songId": req.body.songId,
+  });
+  if (isSongExist) return next(new CustomError("Song already exist", 400));
 
   playlist.songs.push(req.body);
 
