@@ -14,7 +14,7 @@ export const createPlaylist = cathcAsyncError(async (req, res, next) => {
   });
   if (isExist) return next(new CustomError("Playlist already exits", 404));
 
-  const isMore = await playlist.find({ user: req.user.id });
+  const isMore = await playlistModel.find({ user: req.user.id });
   if (isMore.length === 8)
     return next(new CustomError("You can only create 8 playlist", 404));
 
