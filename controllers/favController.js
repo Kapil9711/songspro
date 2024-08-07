@@ -51,3 +51,54 @@ export const removeFav = catchAsyncError(async (req, res, next) => {
     message: "removed successfully",
   });
 });
+
+import axios from "axios";
+import Ffmpeg from "fluent-ffmpeg";
+import ffmpegInstaller from "@ffmpeg-installer/ffmpeg";
+import bufferToStream from "buffer-to-stream";
+import streamBuffers from "stream-buffers";
+import path from "path";
+
+Ffmpeg.setFfmpegPath(ffmpegInstaller.path);
+
+// get mp3 buffer = api/v1/mp3buffer
+export const getMp3Buffer = async (req, res, next) => {
+  const audioUrl = req.query.url; // URL of the M4A file
+
+  try {
+    const response = await axios.get(audioUrl, { responseType: "arraybuffer" });
+    const m4aBlob = Buffer.from(response.data);
+
+    const mp3Buffer = await convertM4aBlobToMp3Buffer(m4aBlob);
+
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="converted.mp3"'
+    );
+    res.setHeader("Content-Type", "audio/mpeg");
+    res.send(mp3Buffer);
+  } catch (error) {
+    console.error("Error fetching or converting audio:", error);
+    res.status(500).send("Error fetching or converting audio");
+  }
+};
+
+const convertM4aBlobToMp3Buffer = (m4aBlob) => {
+  return new Promise((resolve, reject) => {
+    const inputStream = bufferToStream(m4aBlob);
+    const writableStreamBuffer = new streamBuffers.WritableStreamBuffer();
+
+    Ffmpeg(inputStream)
+      .audioBitrate("320k")
+      .toFormat("mp3")
+      .on("end", () => {
+        console.log("Conversion finished!");
+        resolve(writableStreamBuffer.getContents());
+      })
+      .on("error", (err) => {
+        console.error("Error during conversion:", err);
+        reject(err);
+      })
+      .pipe(writableStreamBuffer);
+  });
+};
