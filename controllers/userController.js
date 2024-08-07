@@ -161,7 +161,7 @@ export const getImage = catchAsyncError(async (req, res, next) => {
   const fileDb = await fileModel.findOne({ user: req.user.id });
   if (!fileDb) return next(new CustomError("File not Found", 404));
 
-  const uploadPath = "./temp/" + fileDb.filename;
+  const uploadPath = "/temp/" + fileDb.filename;
   res.setHeader("Content-Type", "image/jpeg");
   res.setHeader(
     "Content-Disposition",
