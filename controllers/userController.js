@@ -10,6 +10,10 @@ import crypto from "crypto";
 import fileModel from "../models/files.js";
 import fs from "fs";
 import sharp from "sharp";
+import {
+  followingRequestModel,
+  followRequestModel,
+} from "../models/followers.js";
 
 //register new user = api/v1/register
 export const register = catchAsyncError(async (req, res, next) => {
@@ -105,6 +109,18 @@ export const getUserProfile = catchAsyncError(async (req, res, next) => {
   res.status(200).json({ success: false, data: user });
 });
 
+//get user = api/v1/users
+export const getAllUser = catchAsyncError(async (req, res, next) => {
+  const user = await userModel
+    .findById(req.user.id)
+    .select("-password -isadmin");
+  if (!user) return next(new CustomError("Login to get the info", 401));
+
+  const users = await userModel.find({ _id: { $ne: req.user.id } });
+
+  res.status(200).json({ success: true, data: users });
+});
+
 // upload image = api/v1/image
 
 export const uploadImage = catchAsyncError(async (req, res, next) => {
@@ -181,4 +197,52 @@ export const isUserLoggedIn = catchAsyncError(async (req, res, next) => {
   if (user) {
     res.status(200).json({ success: true });
   } else res.status(401).json({ success: false });
+});
+
+// add to user following  = /api/v1/follow/
+export const followRequest = catchAsyncError(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (!user) return next(new CustomError("Login to access this resourse", 401));
+
+  await followingRequestModel.create({
+    user: req.user.id,
+    followingUserId: req.body.id,
+  });
+
+  await followRequestModel.create({
+    user: req.body.id,
+    followerUserId: req.user.id,
+  });
+
+  res.status(200).json({ success: true, message: "Requested successfully" });
+});
+
+// get all follow reqest = api/v1/followingResquest
+export const getFollowingRequest = catchAsyncError(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (!user) return next(new CustomError("Login to access this resourse", 401));
+
+  const followings = await followingRequestModel.find({ user: req.user.id });
+
+  if (followings.length === 0)
+    return next(new CustomError("Followings not found", 404));
+  res.status(200).json({
+    success: true,
+    data: followings,
+  });
+});
+
+// get all follow reqest = api/v1/followerResquest
+export const getFollowReq = catchAsyncError(async (req, res, next) => {
+  const user = await userModel.findById(req.user.id);
+  if (!user) return next(new CustomError("Login to access this resourse", 401));
+
+  const follower = await followRequestModel.find({ user: req.user.id });
+
+  if (follower.length === 0)
+    return next(new CustomError("Followers not found", 404));
+  res.status(200).json({
+    success: true,
+    data: followings,
+  });
 });

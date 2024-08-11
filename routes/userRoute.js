@@ -11,6 +11,10 @@ import {
   resetPassword,
   verifyEmail,
   isUserLoggedIn,
+  getAllUser,
+  followRequest,
+  getFollowReq,
+  getFollowingRequest,
 } from "../controllers/userController.js";
 import { isAuthenticated } from "../middlewares/auth.js";
 
@@ -19,9 +23,12 @@ router.route("/verify/:token").get(verifyEmail);
 router.route("/login").post(login);
 router.route("/password/forgot").put(forgotPassword);
 router.route("/password/reset/:token").put(resetPassword);
-
+router.route("/follow").post(isAuthenticated, followRequest);
 router.route("/profile").get(isAuthenticated, getUserProfile);
 router.route("/islogin").get(isAuthenticated, isUserLoggedIn);
+router.route("/users").get(isAuthenticated, getAllUser);
+router.route("/followerRequest").get(isAuthenticated, getFollowReq);
+router.route("/followingRequest").get(isAuthenticated, getFollowingRequest);
 
 router
   .route("/image")

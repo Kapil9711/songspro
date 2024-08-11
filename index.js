@@ -3,7 +3,7 @@ import express from "express";
 const app = express();
 
 /*===Parsers===
- 1 body-parser
+ 1 body-parser                                   
  2 cookie-parser
  ============*/
 import cookieParser from "cookie-parser";
