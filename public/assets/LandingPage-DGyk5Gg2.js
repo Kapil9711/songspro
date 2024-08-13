@@ -1,4 +1,4 @@
-import{e as o,r as n,j as e,A as r}from"./index-nO-H62NG.js";import{d as c}from"./styled-components.browser.esm-c51siuws.js";import{u as i,g,E as d}from"./index-BcjFIs9_.js";const x="/assets/landingPagebg-Bi3d_ctO.jpg",l="/assets/bgm-Dyhjn3Ps.mp3",m=c.div`
+import{e as o,r as n,j as e,A as r}from"./index-BUY5S-qX.js";import{d as c}from"./styled-components.browser.esm-Ci594WkO.js";import{u as i,g,E as d}from"./index-DgunB_DX.js";const x="/assets/landingPagebg-Bi3d_ctO.jpg",l="/assets/bgm-Dyhjn3Ps.mp3",m=c.div`
   height: 100vh;
   background-image: url(${x});
   background-position: center;
