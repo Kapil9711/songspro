@@ -1,0 +1,1 @@
+import{u as r,r as a,g as e,j as t}from"./index-nO-H62NG.js";import{ShowAllSongs as o}from"./Show-All-Songs-Dh1ZS6Qa.js";import"./Notify-DFKgAlbX.js";import"./Favorite-QXLk7CVh.js";const n=()=>{const s=r();return a.useEffect(()=>{s(e("110858205"))},[]),t.jsx("div",{className:"mt-1 md:mt-4 w-fit mx-auto",children:t.jsx(o,{type:"album"})})};export{n as default};
