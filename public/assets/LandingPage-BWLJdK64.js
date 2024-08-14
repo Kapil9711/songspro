@@ -1,4 +1,4 @@
-import{e as o,r as n,j as e,A as r}from"./index-MaS97gey.js";import{d as c,u as i,g,E as d}from"./index-C7QLzcs0.js";const x="/assets/landingPagebg-Bi3d_ctO.jpg",l="/assets/bgm-Dyhjn3Ps.mp3",u=c.div`
+import{e as o,r as n,j as e,A as r}from"./index-B5qGu9zl.js";import{d as c,u as i,g,E as d}from"./index-CNMPY8p1.js";const x="/assets/landingPagebg-Bi3d_ctO.jpg",l="/assets/bgm-Dyhjn3Ps.mp3",u=c.div`
   height: 100vh;
   background-image: url(${x});
   background-position: center;
