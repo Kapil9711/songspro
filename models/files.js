@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const fileSchema = new Schema({
-  filename: {
+  mimeType: {
     type: String,
   },
   data: {

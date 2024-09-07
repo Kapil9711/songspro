@@ -133,39 +133,36 @@ export const uploadImage = catchAsyncError(async (req, res, next) => {
 
   const file = req.files.image;
 
-  file.name = "img" + user._id + file.name;
-  const fileDb = await fileModel.findOne({ user: req.user.id });
+  if (!file.mimetype.includes("image")) {
+    return next(new CustomError("Please provide a image", 400));
+  }
+
+  let fileDb = await fileModel.findOne({ user: req.user.id });
 
   const compresedBuffer = await sharp(fileDb.data)
     .resize({ width: 800 })
     .jpeg({ quality: 50 })
     .toBuffer();
-
-  user.image = file.name;
-  await user.save({ validateBeforeSave: true });
-
-  if (!fileDb) {
-    await fileModel.create({
-      filename: file.name,
-      data: compresedBuffer,
-      mimetype: file.mimetype,
-      user: req.user.id,
-    });
-    res.status(201).json({
-      success: true,
-      message: "uploaded successfully",
-    });
+  if (fileDb) {
+    fileDb.mimeType = file.mimetype;
+    fileDb.data = compresedBuffer;
+    fileDb = await fileDb.save();
   } else {
-    await fileModel.findByIdAndUpdate(fileDb._id, {
-      filename: file.name,
+    fileDb = await fileModel.create({
+      user: req.user.id,
       data: compresedBuffer,
-      mimetype: file.mimetype,
-    });
-    res.status(201).json({
-      success: true,
-      message: "changed successfully",
+      mimeType: file.mimetype,
     });
   }
+
+  const base64Image = fileDb.data.toString("base64");
+  const dataUrl = `data:${fileDb.mimeType};base64,${base64Image}`;
+
+  res.status(200).json({
+    success: true,
+    message: "Image uploaded successfully",
+    image: dataUrl,
+  });
 });
 
 //get image = api/v1/image
@@ -177,17 +174,13 @@ export const getImage = catchAsyncError(async (req, res, next) => {
   const fileDb = await fileModel.findOne({ user: req.user.id });
   if (!fileDb) return next(new CustomError("File not Found", 404));
 
-  const uploadPath = path.join("/temp", fileDb.filename);
-  res.setHeader("Content-Type", "image/jpeg");
-  res.setHeader(
-    "Content-Disposition",
-    'attachment; filename="userProfile.jpg"'
-  );
+  const base64Image = fileDb.data.toString("base64");
+  const dataUrl = `data:${fileDb.mimeType};base64,${base64Image}`;
 
-  fs.writeFile(uploadPath, fileDb.data, (err, data) => {
-    if (err) return next(new CustomError("Internal server error", 500));
-    const readStream = fs.createReadStream(uploadPath);
-    readStream.pipe(res);
+  res.status(200).json({
+    success: true,
+    message: "Image uploaded successfully",
+    image: dataUrl,
   });
 });
 

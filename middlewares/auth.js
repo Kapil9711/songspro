@@ -11,10 +11,12 @@ export const isAuthenticated = async (req, res, next) => {
       new CustomError("Please login before accessing this information")
     );
   }
-
-  const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
-  if (!decode) return next(new CustomError("login to access this", 401));
-  const user = await userModel.findById(decode?.id);
-  req.user = user;
-  next();
+  try {
+    const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
+    const user = await userModel.findById(decode?.id);
+    req.user = user;
+    next();
+  } catch (err) {
+    return next(new CustomError("login to access this", 401));
+  }
 };
