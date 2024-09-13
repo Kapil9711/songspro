@@ -26,8 +26,7 @@ export const register = catchAsyncError(async (req, res, next) => {
     await sendEmail(message);
     res.status(201).json({
       success: true,
-      message:
-        "Verification mail sent successfully, check your inbox and verify the email",
+      message: "Check your email and verify",
     });
   } catch (error) {
     return next(error);
@@ -196,6 +195,13 @@ export const isUserLoggedIn = catchAsyncError(async (req, res, next) => {
 export const followRequest = catchAsyncError(async (req, res, next) => {
   const user = await userModel.findById(req.user.id);
   if (!user) return next(new CustomError("Login to access this resourse", 401));
+  const isExist = await followingRequestModel.findOneAndDelete({
+    followingUserId: req.body.id,
+  });
+  if (isExist)
+    return res
+      .status(200)
+      .json({ success: true, message: "Canceled successfully" });
 
   await followingRequestModel.create({
     user: req.user.id,

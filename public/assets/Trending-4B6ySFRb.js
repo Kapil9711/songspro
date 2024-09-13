@@ -1,1 +1,0 @@
-import{j as t}from"./index-pRbq_2M3.js";import{S as m}from"./Show-All-Songs-B9MyGd-X.js";import"./Notify-Fsy7EDUE.js";import"./styled-components.browser.esm-D4PZgQRA.js";const a=()=>t.jsx("div",{className:"mt-1 md:mt-4 w-fit mx-auto",children:t.jsx(m,{type:"album"})});export{a as default};

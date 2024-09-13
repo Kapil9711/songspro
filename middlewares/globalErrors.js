@@ -15,13 +15,14 @@ const errors = (err, req, res, next) => {
 
   if (process.env.NODE_ENV == "production") {
     let errorCopy = { statusCode, message };
+    console.log(err.name);
 
     if (err.code === 11000) {
       message = `${Object.keys(err.keyValue)} already exists`;
       errorCopy = new CustomError(message, 400);
     }
-    if (err.name === "Validator") {
-      const message = message.slice(err.message.lastIndexOf(":") + 1).trim();
+    if (err.name === "ValidationError") {
+      message = message.slice(err.message.lastIndexOf(":") + 1).trim();
       errorCopy = new CustomError(message, 400);
     }
     res.status(errorCopy.statusCode).json({

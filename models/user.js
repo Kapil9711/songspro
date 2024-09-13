@@ -8,8 +8,8 @@ const options = {
   username: {
     type: String,
     required: [true, "Username is required"],
-    minlength: [6, "Username should have length between 6 and 15"],
-    maxlength: [15, "Username should have length between 6 and 15"],
+    minlength: [6, "Username Min 6 chars"],
+    maxlength: [15, "Usernaem Max 15 chars"],
     unique: true,
   },
 
@@ -36,9 +36,6 @@ const options = {
     type: Boolean,
     default: false,
     Select: false,
-  },
-  image: {
-    type: String,
   },
 
   resetPasswordToken: String,
