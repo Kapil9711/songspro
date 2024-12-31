@@ -1,4 +1,4 @@
-import{j as s,u as i,e as d,r,A as t}from"./index-BF6LwJ9V.js";/* empty css                      */import{d as c}from"./styled-components.browser.esm-CFdXec4e.js";const x=c.li`
+import{j as s,u as i,e as d,r,A as t}from"./index-DOtzI9er.js";/* empty css                      */import{d as c}from"./styled-components.browser.esm-YVeQgiV4.js";const x=c.li`
   .friends-span {
     width: 60px;
     white-space: nowrap;
